@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Negocios Interactivo: SATLOG.NET</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Application Structure Plan: 
+        Una SPA con una barra de navegación superior fija para acceder a las secciones principales. 
+        La sección "Inicio" actuará como un dashboard con resúmenes visuales y puntos clave del Resumen Ejecutivo.
+        Otras secciones temáticas agruparán el contenido del plan de negocios: "La Empresa" (Descripción, Misión, Visión), 
+        "Servicios" (Oferta detallada), "Mercado y Estrategia" (Análisis de Mercado, Plan de Marketing), 
+        "Operaciones" (Análisis Administrativo y Técnico), "Finanzas y Viabilidad" (Análisis Financiero con gráficos, Riesgos) 
+        e "Impacto".
+        Esta estructura busca ofrecer una visión general rápida y permitir una profundización modular, 
+        mejorando la usabilidad respecto a un documento lineal. La interactividad se centrará en la navegación, 
+        visualización de datos y expansión de detalles en servicios y riesgos.
+    -->
+    <!-- Visualization & Content Choices:
+        - Resumen Ejecutivo (Inicio): Tarjetas HTML estilizadas para puntos clave (Oportunidad, Oferta, Mercado, Equipo, Finanzas). Meta: Resumen rápido.
+        - Metas Clave (Inicio/La Empresa): Lista HTML con iconos Unicode. Meta: Mostrar ambición.
+        - Inversión Requerida (Inicio/Finanzas): Gráfico de Donut (Chart.js) para desglose. Meta: Claridad en necesidad de fondos.
+        - Servicios (Nuestros Servicios): Acordeón interactivo (HTML/JS) para detallar Desarrollo, Ciberseguridad, Análisis de Datos. Meta: Detallar oferta de forma organizada.
+        - Tamaño del Mercado (Mercado y Estrategia): Gráfico de Barras (Chart.js) para tamaño actual y proyección. Meta: Mostrar potencial.
+        - Proyecciones Financieras (Análisis Financiero): Gráfico de Líneas (Chart.js) para Ingresos. Cifras clave (VAN, TIR) en texto. Meta: Demostrar viabilidad.
+        - Riesgos (Finanzas y Viabilidad): Lista expandible (HTML/JS) para mostrar riesgo y mitigación. Meta: Mostrar preparación.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+
+        /* .nav-link.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; } */
+        /* Reemplazado por variables CSS */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .risk-item-mitigation {
+            display: none;
+        }
+
+        :root {
+            --futuristic-primary: #0A2A4D;
+            /* Azul oscuro profundo */
+            --futuristic-secondary: #00C9D1;
+            /* Cian vibrante */
+            --futuristic-accent: #A020F0;
+            /* Púrpura eléctrico (más suave que magenta puro) */
+            --futuristic-bg-light: #F0F4F8;
+            /* Gris muy claro / Off-white */
+            --futuristic-card-bg: #FFFFFF;
+            /* Blanco para tarjetas */
+            --futuristic-text-dark: #1A202C;
+            /* Gris oscuro casi negro */
+            --futuristic-text-light: #718096;
+            /* Gris medio */
+            --futuristic-text-header: #E0E7FF;
+            /* Texto claro para header oscuro */
+            --futuristic-hover-accent: #7017A8;
+            /* Púrpura más oscuro para hover */
+        }
+
+        .bg-futuristic-primary {
+            background-color: var(--futuristic-primary);
+        }
+
+        .text-futuristic-primary-text {
+            color: var(--futuristic-text-dark);
+        }
+
+        /* Para texto sobre fondos claros */
+        .text-futuristic-primary-header {
+            color: var(--futuristic-primary);
+        }
+
+        /* Para títulos de sección */
+
+        .text-futuristic-secondary {
+            color: var(--futuristic-secondary);
+        }
+
+        .bg-futuristic-secondary {
+            background-color: var(--futuristic-secondary);
+        }
+
+        .text-futuristic-accent {
+            color: var(--futuristic-accent);
+        }
+
+        .border-futuristic-accent {
+            border-color: var(--futuristic-accent);
+        }
+
+        .hover\:text-futuristic-accent:hover {
+            color: var(--futuristic-accent);
+        }
+
+        .hover\:text-futuristic-hover-accent:hover {
+            color: var(--futuristic-hover-accent);
+        }
+
+
+        .bg-futuristic-bg-light {
+            background-color: var(--futuristic-bg-light);
+        }
+
+        .bg-futuristic-card-bg {
+            background-color: var(--futuristic-card-bg);
+        }
+
+        .text-futuristic-text-dark {
+            color: var(--futuristic-text-dark);
+        }
+
+        .text-futuristic-text-light {
+            color: var(--futuristic-text-light);
+        }
+
+        .text-futuristic-text-header {
+            color: var(--futuristic-text-header);
+        }
+
+
+        .nav-link.active {
+            color: var(--futuristic-secondary);
+            /* Cian para el enlace activo */
+            border-bottom-color: var(--futuristic-secondary);
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: var(--futuristic-primary);
+            border-bottom: 2px solid var(--futuristic-secondary);
+            /* Borde cian */
+            padding-bottom: 0.5rem;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px -5px rgba(var(--futuristic-primary-rgb, 10, 42, 77), 0.2);
+            /* Sombra sutil con color primario */
+        }
+
+        .accordion-header {
+            color: var(--futuristic-primary);
+        }
+
+        .accordion-header:hover {
+            background-color: var(--futuristic-bg-light);
+        }
+
+        .risk-item button:hover {
+            background-color: var(--futuristic-bg-light);
+        }
+    </style>
+</head>
+
+<body class="bg-futuristic-bg-light text-futuristic-text-dark">
+
+    <header class="bg-futuristic-primary text-futuristic-text-header shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-futuristic-secondary" id="home-link">SATLOG.NET</a>
+            <nav>
+                <ul class="flex space-x-3 md:space-x-4">
+                    <li><a href="#inicio"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Inicio</a>
+                    </li>
+                    <li><a href="#empresa"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">La
+                            Empresa</a></li>
+                    <li><a href="#servicios"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Servicios</a>
+                    </li>
+                    <li><a href="#mercado"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Mercado</a>
+                    </li>
+                    <li><a href="#operaciones"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Operaciones</a>
+                    </li>
+                    <li><a href="#finanzas"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Finanzas</a>
+                    </li>
+                    <li><a href="#impacto"
+                            class="nav-link px-2 py-1 md:px-3 md:py-2 hover:text-futuristic-secondary border-b-2 border-transparent">Impacto</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <section id="inicio" class="content-section active">
+            <h1 class="text-3xl font-bold mb-6 section-title">Bienvenido al Plan de Negocios de SATLOG.NET</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">Una visión interactiva de nuestra estrategia para
+                revolucionar el soporte tecnológico integrado para PYMES en Colombia. Explore nuestras secciones para
+                conocer a fondo nuestra propuesta.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card bg-futuristic-card-bg p-6 rounded-lg shadow-xl">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Oportunidad de Negocio</h2>
+                    <p class="text-sm text-futuristic-text-light">Resolvemos la gestión fragmentada, costosa e insegura
+                        de la presencia digital de las PYMES, unificando desarrollo, ciberseguridad y análisis de datos.
+                    </p>
+                </div>
+                <div class="card bg-futuristic-card-bg p-6 rounded-lg shadow-xl">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Nuestra Oferta</h2>
+                    <p class="text-sm text-futuristic-text-light">Servicios integrados de desarrollo web/móvil,
+                        ciberseguridad avanzada y análisis de datos, creando un ciclo virtuoso de optimización y
+                        protección.</p>
+                </div>
+                <div class="card bg-futuristic-card-bg p-6 rounded-lg shadow-xl">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Ventaja Competitiva</h2>
+                    <p class="text-sm text-futuristic-text-light">Integración holística, enfoque especializado en PYMES
+                        y una alianza estratégica a largo plazo con nuestros clientes.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-xl">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-3">Metas Clave</h2>
+                    <ul class="list-disc list-inside text-sm space-y-1 text-futuristic-text-light">
+                        <li><span class="font-medium text-futuristic-text-dark">Primer Año:</span> Adquirir 10 clientes
+                            recurrentes, satisfacción del 90%.</li>
+                        <li><span class="font-medium text-futuristic-text-dark">Tres Años:</span> Cuota de mercado del
+                            5% en PYMES de la región, rentabilidad y flujo de caja positivo.</li>
+                        <li><span class="font-medium text-futuristic-text-dark">Largo Plazo:</span> Ser referente en
+                            transformación digital segura para PYMES en Colombia.</li>
+                    </ul>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-xl">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-3">Inversión Inicial Requerida
+                    </h2>
+                    <p class="text-3xl font-bold text-futuristic-accent mb-2">$85.000.000 COP</p>
+                    <div class="chart-container h-48 max-h-60">
+                        <canvas id="inversionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="empresa" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">La Empresa: SATLOG.NET</h1>
+            <p class="mb-6 text-lg text-futuristic-text-light">Conozca los fundamentos, la dirección estratégica y los
+                valores que definen a SATLOG.NET como su futuro socio tecnológico.</p>
+
+            <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Descripción de la Empresa</h2>
+                <p class="mb-2 text-futuristic-text-light"><strong>Antecedentes y Justificación:</strong> SATLOG.NET
+                    nace de la identificación de una creciente y crítica necesidad en el mercado: la gestión integral y
+                    cohesiva de la presencia digital, la seguridad informática y la inteligencia de negocios para PYMES.
+                    La fragmentación actual de servicios resulta en mayores costos, brechas de seguridad y
+                    subutilización del potencial de los datos. SATLOG.NET se concibe como el socio tecnológico
+                    estratégico que unifica estos tres pilares en una oferta integrada.</p>
+                <p class="text-futuristic-text-light"><strong>Proyección a Futuro:</strong> SATLOG.NET aspira a
+                    consolidarse en los próximos cinco años como un referente en la prestación de servicios tecnológicos
+                    integrados para PYMES en la región Caribe, reconocido por su excelencia, innovación y el impacto
+                    positivo en el negocio de sus clientes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Misión</h2>
+                    <p class="text-futuristic-text-light">Proveer a las PYMES soluciones tecnológicas integrales de
+                        desarrollo web, ciberseguridad y análisis de datos, a través de un servicio excepcional,
+                        innovación constante y una alianza estratégica basada en la integridad y la confianza, generando
+                        valor tangible y un crecimiento medible para nuestros clientes.</p>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Visión</h2>
+                    <p class="text-futuristic-text-light">Ser el socio tecnológico líder para las Pequeñas y Medianas
+                        Empresas en la región Caribe de Colombia, reconocido por impulsar su transformación digital
+                        segura, inteligente y sostenible, permitiéndoles competir y prosperar en la economía global.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="servicios" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">Nuestros Servicios Integrados</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">Descubra cómo nuestra oferta sinérgica en desarrollo,
+                ciberseguridad y análisis de datos aporta un valor único a su empresa.</p>
+
+            <div class="space-y-4">
+                <div class="accordion-item bg-futuristic-card-bg rounded-lg shadow-md">
+                    <button
+                        class="accordion-header w-full text-left p-4 font-semibold hover:bg-futuristic-bg-light rounded-t-lg flex justify-between items-center">
+                        <span>A. Desarrollo de Aplicaciones Web y Móviles</span>
+                        <span
+                            class="arrow text-xl text-futuristic-secondary transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div class="accordion-content p-4 border-t border-slate-200">
+                        <ul class="list-disc list-inside space-y-1 text-sm text-futuristic-text-light">
+                            <li>Diseño y Desarrollo Web a Medida (Corporativo, E-commerce, Plataformas).</li>
+                            <li>Desarrollo de Aplicaciones Móviles (Nativas e Híbridas).</li>
+                            <li>Mantenimiento y Soporte Web continuo.</li>
+                            <li>Integración de Sistemas (CRM, ERP, Pasarelas de Pago).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item bg-futuristic-card-bg rounded-lg shadow-md">
+                    <button
+                        class="accordion-header w-full text-left p-4 font-semibold hover:bg-futuristic-bg-light rounded-t-lg flex justify-between items-center">
+                        <span>B. Servicios de Ciberseguridad</span>
+                        <span
+                            class="arrow text-xl text-futuristic-secondary transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div class="accordion-content p-4 border-t border-slate-200">
+                        <ul class="list-disc list-inside space-y-1 text-sm text-futuristic-text-light">
+                            <li>Auditorías de Seguridad y Análisis de Vulnerabilidades.</li>
+                            <li>Implementación de Soluciones de Seguridad (Firewalls, IAM).</li>
+                            <li>Respuesta a Incidentes y Recuperación ante Desastres (DRP/BCP).</li>
+                            <li>Concienciación y Capacitación en Seguridad.</li>
+                            <li>Monitoreo de Seguridad Continuo (SOC as a Service para PYMES).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item bg-futuristic-card-bg rounded-lg shadow-md">
+                    <button
+                        class="accordion-header w-full text-left p-4 font-semibold hover:bg-futuristic-bg-light rounded-t-lg flex justify-between items-center">
+                        <span>C. Análisis de Datos e Inteligencia de Negocios</span>
+                        <span
+                            class="arrow text-xl text-futuristic-secondary transform transition-transform duration-300">&#9662;</span>
+                    </button>
+                    <div class="accordion-content p-4 border-t border-slate-200">
+                        <ul class="list-disc list-inside space-y-1 text-sm text-futuristic-text-light">
+                            <li>Recolección, Almacenamiento, Limpieza y Preparación de Datos.</li>
+                            <li>Análisis Descriptivo y Diagnóstico a través de dashboards interactivos.</li>
+                            <li>Visualización de Datos para facilitar la comprensión de insights.</li>
+                            <li>Consultoría en Estrategia de Datos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 bg-futuristic-primary bg-opacity-10 text-futuristic-primary-text p-4 rounded-lg shadow">
+                <h3 class="font-semibold text-futuristic-primary-header mb-2">Propuesta de Valor Única:</h3>
+                <p class="text-sm">La integración nativa de estos servicios. Al desarrollar una aplicación web,
+                    incorporamos desde el inicio las mejores prácticas de seguridad y planificamos la recolección de
+                    datos relevantes. Esto reduce la complejidad para el cliente, optimiza la inversión y minimiza las
+                    vulnerabilidades.</p>
+            </div>
+        </section>
+
+        <section id="mercado" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">Análisis del Mercado y Estrategia</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">Entendemos el entorno para posicionar a SATLOG.NET como
+                líder. Aquí detallamos nuestro mercado objetivo, la competencia y nuestro plan de marketing.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Mercado Meta</h2>
+                    <p class="text-sm text-futuristic-text-light">Pequeñas y Medianas Empresas (11-200 trabajadores) en
+                        la región Caribe de Colombia, con enfoque inicial en sectores agroindustrial, comercial, salud y
+                        servicios en Montería y Córdoba. Empresas que necesitan digitalizarse pero carecen de un
+                        departamento de TI interno.</p>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Tamaño y Crecimiento del
+                        Mercado</h2>
+                    <p class="text-sm text-futuristic-text-light mb-2">Más de 3,000 PYMES activas en Córdoba. Proyección
+                        de crecimiento del mercado TI regional: 15% anual.</p>
+                    <div class="chart-container h-56 max-h-64">
+                        <canvas id="mercadoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Competencia y Ventaja</h2>
+                <p class="text-sm text-futuristic-text-light mb-1"><strong>Directos:</strong> No existen actualmente en
+                    Montería empresas con el mismo paquete integrado explícito.</p>
+                <p class="text-sm text-futuristic-text-light mb-1"><strong>Indirectos:</strong> Agencias web,
+                    proveedores TI generales, freelancers, empresas nacionales remotas.</p>
+                <p class="text-sm text-futuristic-text-light"><strong>Ventaja SATLOG.NET:</strong> Especialización en la
+                    integración, cercanía local, modelo de precios competitivo.</p>
+            </div>
+            <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Plan de Mercadeo</h2>
+                <ul class="list-disc list-inside space-y-2 text-sm text-futuristic-text-light">
+                    <li><strong>Precios:</strong> Modelo híbrido (proyecto + retainer mensual).</li>
+                    <li><strong>Promoción:</strong> Marketing de contenidos (blog, webinars), networking local (Cámara
+                        de Comercio), marketing digital (SEO local, LinkedIn).</li>
+                    <li><strong>Ventas:</strong> Enfoque consultivo, diagnóstico inicial y soluciones a medida.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="operaciones" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">Operaciones y Gestión</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">La eficiencia y la excelencia son clave en nuestra
+                operativa. Conozca nuestra estructura, procesos y cómo gestionamos el talento.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Análisis Administrativo</h2>
+                    <p class="text-sm font-medium text-futuristic-text-dark">Estructura Organizacional:</p>
+                    <p class="text-sm text-futuristic-text-light mb-2">Sociedad por Acciones Simplificada (S.A.S.).
+                        Estructura inicial plana: Gerente General/Fundador, Equipo Técnico (Desarrollador Full-Stack,
+                        Especialista Ciberseguridad/Infraestructura/Datos).</p>
+                    <p class="text-sm font-medium text-futuristic-text-dark">Talento Humano:</p>
+                    <p class="text-sm text-futuristic-text-light">Selección por competencias técnicas y blandas. Plan de
+                        capacitación continua. Remuneración competitiva (base + bonos).</p>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Análisis Técnico y Operativo
+                    </h2>
+                    <p class="text-sm font-medium text-futuristic-text-dark">Proceso de Prestación del Servicio:</p>
+                    <ol class="list-decimal list-inside text-sm text-futuristic-text-light mb-2">
+                        <li>Contacto y Diagnóstico.</li>
+                        <li>Propuesta Personalizada.</li>
+                        <li>Implementación y Desarrollo (Metodologías Ágiles).</li>
+                        <li>Monitoreo y Mantenimiento.</li>
+                        <li>Reportes y Seguimiento.</li>
+                    </ol>
+                    <p class="text-sm font-medium text-futuristic-text-dark">Tecnología e Infraestructura:</p>
+                    <p class="text-sm text-futuristic-text-light">Software (Open Source y Licencias Clave), Hardware
+                        (Laptops alto rendimiento), Infraestructura Cloud (AWS/Azure), Ubicación (Coworking en
+                        Montería).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="finanzas" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">Análisis Financiero y Viabilidad</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">Los números que respaldan nuestra visión. Proyecciones,
+                necesidades de inversión y análisis de riesgos.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Inversión y Financiación</h2>
+                    <p class="text-sm text-futuristic-text-light"><strong>Inversión Inicial:</strong> $85.000.000 COP
+                        (Activos Fijos: $25M, Intangibles: $15M, Capital de Trabajo: $45M).</p>
+                    <p class="text-sm text-futuristic-text-light"><strong>Fuentes:</strong> Aportes de socios ($35M),
+                        Capital Semilla ($50M a gestionar).</p>
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mt-4 mb-3">Proyecciones Clave</h2>
+                    <p class="text-sm text-futuristic-text-light"><strong>Punto de Equilibrio:</strong> Estimado en el
+                        mes 14.</p>
+                    <p class="text-sm text-futuristic-text-light"><strong>VAN:</strong> Positivo después de 3 años.</p>
+                    <p class="text-sm text-futuristic-text-light"><strong>TIR:</strong> Estimada superior al 25%.</p>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Ingresos Proyectados
+                        (Primeros 3 Años)</h2>
+                    <div class="chart-container">
+                        <canvas id="ingresosChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Análisis de Riesgo y Mitigación
+                </h2>
+                <div id="risk-list" class="space-y-3">
+                </div>
+            </div>
+        </section>
+
+        <section id="impacto" class="content-section">
+            <h1 class="text-3xl font-bold mb-6 section-title">Impacto de SATLOG.NET</h1>
+            <p class="mb-8 text-lg text-futuristic-text-light">Más allá de la rentabilidad, buscamos generar un impacto
+                positivo en nuestra comunidad y el ecosistema empresarial.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Impacto Económico</h2>
+                    <ul class="list-disc list-inside text-sm space-y-1 text-futuristic-text-light">
+                        <li>Generación de empleo calificado en la región.</li>
+                        <li>Impulso a la competitividad de las PYMES locales.</li>
+                    </ul>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Impacto Social</h2>
+                    <ul class="list-disc list-inside text-sm space-y-1 text-futuristic-text-light">
+                        <li>Aumento de la madurez digital y resiliencia cibernética.</li>
+                        <li>Promoción del uso ético de datos y privacidad.</li>
+                        <li>Talleres gratuitos de ciberseguridad básica.</li>
+                    </ul>
+                </div>
+                <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-futuristic-primary-header mb-2">Impacto Ambiental</h2>
+                    <ul class="list-disc list-inside text-sm space-y-1 text-futuristic-text-light">
+                        <li>Bajo impacto directo (empresa de servicios).</li>
+                        <li>Política de "oficina sin papel".</li>
+                        <li>Priorización de proveedores cloud sostenibles.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 bg-futuristic-bg-light p-6 rounded-lg shadow">
+                <h3 class="text-xl font-semibold text-futuristic-primary-header mb-2">Documentos de Soporte</h3>
+                <p class="text-sm text-futuristic-text-light">El plan de negocios completo incluye anexos detallados
+                    como hojas de vida del equipo, investigación de mercado, proyecciones financieras completas,
+                    cronogramas y más, disponibles bajo solicitud para un análisis más profundo.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-futuristic-text-dark text-futuristic-bg-light text-center p-6 mt-12">
+        <p>&copy; <span id="currentYear"></span> SATLOG.NET. Todos los derechos reservados.</p>
+        <p class="text-xs">Montería, Córdoba, Colombia</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const homeLink = document.getElementById('home-link');
+
+            function setActiveSection(hash) {
+                const targetHash = hash || '#inicio';
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active', 'text-futuristic-secondary', 'border-futuristic-secondary');
+                    link.classList.add('text-futuristic-text-header', 'border-transparent');
+                    if (link.getAttribute('href') === targetHash) {
+                        link.classList.add('active', 'text-futuristic-secondary', 'border-futuristic-secondary');
+                        link.classList.remove('text-futuristic-text-header', 'border-transparent');
+                    }
+                });
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                    if ('#' + section.id === targetHash) {
+                        section.classList.add('active');
+                    }
+                });
+                window.scrollTo(0, 0);
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetHash = this.getAttribute('href');
+                    setActiveSection(targetHash);
+                    history.pushState(null, null, targetHash);
+                });
+            });
+
+            homeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                setActiveSection('#inicio');
+                history.pushState(null, null, '#inicio');
+            });
+
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function () {
+                    const content = this.nextElementSibling;
+                    const arrow = this.querySelector('.arrow');
+                    const isCurrentlyOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+                    document.querySelectorAll('.accordion-content').forEach(accContent => {
+                        accContent.style.maxHeight = '0px';
+                    });
+                    document.querySelectorAll('.accordion-header .arrow').forEach(accArrow => {
+                        accArrow.style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isCurrentlyOpen) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        arrow.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const risksData = [
+                {
+                    risk: "Baja adopción de servicios integrados por PYMES locales.",
+                    mitigation: "Fuerte estrategia de marketing de contenidos y talleres para educar al mercado. Ofrecer auditorías iniciales a bajo costo."
+                },
+                {
+                    risk: "Entrada de un competidor fuerte a la región.",
+                    mitigation: "Fidelizar a los clientes a través de un servicio excepcional y personalizado. Construir una marca sólida."
+                },
+                {
+                    risk: "Pérdida de personal técnico clave.",
+                    mitigation: "Fomentar un excelente ambiente laboral, ofrecer capacitación y crecimiento. Estandarizar y documentar procesos."
+                },
+                {
+                    risk: "Brecha de seguridad en infraestructura propia o de un cliente.",
+                    mitigation: "Altas medidas de seguridad internas, plan de respuesta a incidentes, seguro de responsabilidad civil profesional."
+                },
+                {
+                    risk: "Problemas de flujo de caja por retraso en pagos.",
+                    mitigation: "Políticas de pago claras (ej. 50% anticipo). Priorizar contratos de retainer mensual."
+                }
+            ];
+
+            const riskListContainer = document.getElementById('risk-list');
+            if (riskListContainer) {
+                risksData.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'risk-item border border-slate-300 rounded-md';
+
+                    const button = document.createElement('button');
+                    button.className = 'w-full text-left p-3 font-medium text-futuristic-text-dark hover:bg-futuristic-bg-light flex justify-between items-center';
+                    button.innerHTML = `<span>${item.risk}</span> <span class="text-sm text-futuristic-secondary">&#9662; Ver mitigación</span>`;
+
+                    const mitigationDiv = document.createElement('div');
+                    mitigationDiv.className = 'risk-item-mitigation p-3 border-t border-slate-300 text-sm text-futuristic-text-light';
+                    mitigationDiv.textContent = item.mitigation;
+
+                    button.addEventListener('click', () => {
+                        const isMitigationVisible = mitigationDiv.style.display === 'block';
+                        mitigationDiv.style.display = isMitigationVisible ? 'none' : 'block';
+                        button.querySelector('span:last-child').innerHTML = isMitigationVisible ? '&#9662; Ver mitigación' : '&#9652; Ocultar mitigación';
+                    });
+
+                    div.appendChild(button);
+                    div.appendChild(mitigationDiv);
+                    riskListContainer.appendChild(div);
+                });
+            }
+
+            const chartFontColor = getComputedStyle(document.documentElement).getPropertyValue('--futuristic-text-dark').trim();
+            const chartGridColor = 'rgba(100, 116, 139, 0.2)';
+
+            const inversionCtx = document.getElementById('inversionChart')?.getContext('2d');
+            if (inversionCtx) {
+                new Chart(inversionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Activos Fijos', 'Activos Intangibles', 'Capital de Trabajo'],
+                        datasets: [{
+                            label: 'Desglose de Inversión',
+                            data: [25000000, 15000000, 45000000],
+                            backgroundColor: ['#00C9D1', '#A020F0', '#0A2A4D'],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-card-bg').trim(),
+                            hoverOffset: 8,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 10, family: 'Inter' },
+                                    color: chartFontColor,
+                                    padding: 10
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: { family: 'Inter' },
+                                titleFont: { family: 'Inter' },
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed !== null) {
+                                            label += new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(context.parsed);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const mercadoCtx = document.getElementById('mercadoChart')?.getContext('2d');
+            if (mercadoCtx) {
+                new Chart(mercadoCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['PYMES Activas (Córdoba)', 'Crecimiento Proyectado TI (Anual %)'],
+                        datasets: [{
+                            label: 'Estimación de Mercado',
+                            data: [3000, 15],
+                            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--futuristic-primary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--futuristic-secondary').trim()],
+                            borderRadius: 4,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: chartGridColor },
+                                ticks: {
+                                    color: chartFontColor, font: { family: 'Inter' },
+                                    callback: function (value, index, values) {
+                                        if (index === 1) return value + '%'; // Check by index for y-axis tick
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: chartFontColor, font: { family: 'Inter' } }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                bodyFont: { family: 'Inter' },
+                                titleFont: { family: 'Inter' },
+                                callbacks: {
+                                    label: function (tooltipContext) { // Renamed to avoid conflict
+                                        let label = tooltipContext.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (tooltipContext.parsed.y !== null) {
+                                            if (tooltipContext.label.includes('%')) {
+                                                label += tooltipContext.parsed.y + '%';
+                                            } else {
+                                                label += tooltipContext.parsed.y;
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ingresosCtx = document.getElementById('ingresosChart')?.getContext('2d');
+            if (ingresosCtx) {
+                new Chart(ingresosCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Año 1', 'Año 2', 'Año 3'],
+                        datasets: [{
+                            label: 'Ingresos Proyectados (COP)',
+                            data: [120000000, 250000000, 450000000],
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-accent').trim(),
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-accent').trim().replace(')', ', 0.1)').replace('rgb', 'rgba'),
+                            fill: true,
+                            tension: 0.2,
+                            pointBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-accent').trim(),
+                            pointBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-card-bg').trim(),
+                            pointHoverBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-card-bg').trim(),
+                            pointHoverBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--futuristic-accent').trim(),
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: chartFontColor, font: { family: 'Inter' } } },
+                            tooltip: {
+                                bodyFont: { family: 'Inter' },
+                                titleFont: { family: 'Inter' },
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: chartGridColor },
+                                ticks: {
+                                    color: chartFontColor, font: { family: 'Inter' },
+                                    callback: function (value, index, values) {
+                                        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: chartFontColor, font: { family: 'Inter' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const initialHash = window.location.hash;
+            setActiveSection(initialHash);
+        });
+    </script>
+</body>
+
+</html>
