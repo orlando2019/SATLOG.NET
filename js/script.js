@@ -9,11 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Datos de riesgos estáticos
     const risksData = [
-        { risk: "Baja adopción de servicios integrados por PYMES locales.", mitigation: "Fuerte estrategia de marketing y talleres. Auditorías iniciales a bajo costo." },
-        { risk: "Entrada de un competidor fuerte a la región.", mitigation: "Fidelizar clientes con servicio excepcional y marca sólida." },
-        { risk: "Pérdida de personal técnico clave.", mitigation: "Ambiente laboral positivo, capacitación y documentación de procesos." },
-        { risk: "Brecha de seguridad en infraestructura.", mitigation: "Medidas de seguridad internas, plan de respuesta a incidentes, seguro profesional." },
-        { risk: "Problemas de flujo de caja por retrasos de pago.", mitigation: "Políticas claras de anticipo (50%), contratos retainer mensual." }
+        {
+            risk: "Baja adopción de servicios integrados por PYMES locales.",
+            mitigation: "Fuerte estrategia de marketing y talleres. Auditorías iniciales a bajo costo."
+        },
+        {
+            risk: "Entrada de un competidor fuerte a la región.",
+            mitigation: "Fidelizar clientes con servicio excepcional y marca sólida."
+        },
+        {
+            risk: "Pérdida de personal técnico clave.",
+            mitigation: "Ambiente laboral positivo, capacitación y documentación de procesos."
+        },
+        {
+            risk: "Brecha de seguridad en infraestructura.",
+            mitigation: "Medidas de seguridad internas, plan de respuesta a incidentes, seguro profesional."
+        },
+        {
+            risk: "Problemas de flujo de caja por retrasos de pago.",
+            mitigation: "Políticas claras de anticipo (50%), contratos retainer mensual."
+        }
     ];
 
     // Función para cambiar sección activa
@@ -102,6 +117,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // (Añadir aquí los scripts para mercadoChart e ingresosChart siguiendo la misma estructura...)
+
+    const mercadoCtx = document.getElementById('mercadoChart')?.getContext('2d');
+            if (mercadoCtx) {
+                new Chart(mercadoCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['PYMES Activas (Córdoba)', 'Crecimiento Proyectado TI (Anual %)'],
+                        datasets: [{
+                            label: 'Estimación de Mercado',
+                            data: [3000, 15],
+                            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--futuristic-primary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--futuristic-secondary').trim()],
+                            borderRadius: 4,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: chartGridColor },
+                                ticks: {
+                                    color: chartFontColor, font: { family: 'Inter' },
+                                    callback: function (value, index, values) {
+                                        if (index === 1) return value + '%';
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: chartFontColor, font: { family: 'Inter' } }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                bodyFont: { family: 'Inter' },
+                                titleFont: { family: 'Inter' },
+                                callbacks: {
+                                    label: function (tooltipContext) {
+                                        let label = tooltipContext.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (tooltipContext.parsed.y !== null) {
+                                            if (tooltipContext.label.includes('%')) {
+                                                label += tooltipContext.parsed.y + '%';
+                                            } else {
+                                                label += tooltipContext.parsed.y;
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
 
     // Año en el footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
