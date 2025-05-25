@@ -121,7 +121,8 @@
                 </div>
                 <div class="bg-futuristic-card-bg p-6 rounded-lg shadow-md h-auto">
                     <h2 class="text-2xl font-semibold text-futuristic-primary-header mb-3">Visión</h2>
-                    <p class="text-futuristic-text-light">Ser el socio tecnológico líder para las Pequeñas y Medianas
+                    <p class="text-futuristic-text-light">Ser en 2030 el socio tecnológico líder para las Pequeñas y
+                        Medianas
                         Empresas en la región Caribe de Colombia, reconocido por impulsar su transformación digital
                         segura, inteligente y sostenible, permitiéndoles competir y prosperar en la economía global.</p>
                 </div>
@@ -229,7 +230,7 @@
                         Mercado</h2>
                     <p class="text-sm text-futuristic-text-light mb-2">Más de 3,000 PYMES activas en Córdoba. Proyección
                         de crecimiento del mercado TI regional: 15% anual.</p>
-                    <div class="chart-container h-auto">
+                    <div class="chart-container h-48">
                         <canvas id="mercadoChart"></canvas>
                     </div>
                 </div>
@@ -399,11 +400,49 @@
         <h5> Orlando Ospino H.</h5>
         <h5> Jader Ortiz</h5>
         <h5> Luis Negrete</h5>
+        <a href="https://portafolio-osweb.netlify.app/">🌐 Portafolio Web</a>
         </p>
         <p class="text-xs">SENA - Montería, Córdoba, Colombia</p>
     </footer>
 
+    <!-- Botón flotante del chatbot con tooltip -->
+    <div class="chatbot-button-container">
+        <button id="chatbotButton" class="chatbot-button" aria-label="Abrir chat">
+            <i class="fas fa-comment-dots"></i>
+            <span class="tooltip">Asistente Virtual</span>
+        </button>
+    </div>
+
+    <!-- Contenedor del chat -->
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <h3>Asistente Virtual</h3>
+            <button id="chatbotClose" class="chatbot-close" aria-label="Cerrar chat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="chatbotMessages" class="chatbot-messages">
+            <!-- Mensajes del chat se insertarán aquí -->
+        </div>
+        <div class="chatbot-input-container">
+            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+            <button id="chatbotSend" class="chatbot-send" aria-label="Enviar mensaje">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- SweetAlert2 para notificaciones -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Font Awesome 6.0.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Estilos del chatbot -->
+    <link rel="stylesheet" href="css/chatbot.css">
+    <!-- Script principal -->
     <script src="js/script.js"></script>
+    <!-- Script del chatbot -->
+    <script src="js/chatbot.js"></script>
 </body>
 
 </html>

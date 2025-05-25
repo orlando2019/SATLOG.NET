@@ -116,90 +116,225 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // (Añadir aquí los scripts para mercadoChart e ingresosChart siguiendo la misma estructura...)
-
-    const mercadoCtx = document.getElementById('mercadoChart')?.getContext('2d');
-            if (mercadoCtx) {
-                new Chart(mercadoCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['PYMES Activas (Córdoba)', 'Crecimiento Proyectado TI (Anual %)'],
-                        datasets: [{
-                            label: 'Estimación de Mercado',
-                            data: [3000, 15],
-                            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--futuristic-primary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--futuristic-secondary').trim()],
-                            borderRadius: 4,
-                            borderSkipped: false,
-                        }]
+    // Gráfico de ingresos proyectados (barras)
+    const ingresosCtx = document.getElementById('ingresosChart')?.getContext('2d');
+    if (ingresosCtx) {
+        createChart(ingresosCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Año 1', 'Año 2', 'Año 3'],
+                datasets: [{
+                    label: 'Ingresos Proyectados (Millones COP)',
+                    data: [350, 750, 1200],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(59, 130, 246, 0.6)',
+                        'rgba(59, 130, 246, 0.4)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(59, 130, 246, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: chartGridColor },
-                                ticks: {
-                                    color: chartFontColor, font: { family: 'Inter' },
-                                    callback: function (value, index, values) {
-                                        if (index === 1) return value + '%';
-                                        return value;
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: chartFontColor, font: { family: 'Inter' } }
-                            }
+                    tooltip: {
+                        bodyFont: {
+                            family: 'Inter'
                         },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                bodyFont: { family: 'Inter' },
-                                titleFont: { family: 'Inter' },
-                                callbacks: {
-                                    label: function (tooltipContext) {
-                                        let label = tooltipContext.dataset.label || '';
-                                        if (label) { label += ': '; }
-                                        if (tooltipContext.parsed.y !== null) {
-                                            if (tooltipContext.label.includes('%')) {
-                                                label += tooltipContext.parsed.y + '%';
-                                            } else {
-                                                label += tooltipContext.parsed.y;
-                                            }
-                                        }
-                                        return label;
-                                    }
-                                }
+                        titleFont: {
+                            family: 'Inter'
+                        },
+                        callbacks: {
+                            label: function (context) {
+                                return `Ingresos: ${new Intl.NumberFormat('es-CO', {
+                                    style: 'currency',
+                                    currency: 'COP',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(context.raw * 1000000)}`;
                             }
                         }
                     }
-                });
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: chartGridColor
+                        },
+                        ticks: {
+                            color: chartFontColor,
+                            font: {
+                                family: 'Inter'
+                            },
+                            callback: function (value) {
+                                return `$${value}M`;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: chartFontColor,
+                            font: {
+                                family: 'Inter'
+                            }
+                        }
+                    }
+                }
             }
+        });
+    }
+
+    const mercadoCtx = document.getElementById('mercadoChart')?.getContext('2d');
+    if (mercadoCtx) {
+        new Chart(mercadoCtx, {
+            type: 'bar',
+            data: {
+                labels: ['PYMES Activas (Córdoba)', 'Crecimiento Proyectado TI (Anual %)'],
+                datasets: [{
+                    label: 'Estimación de Mercado',
+                    data: [3000, 15],
+                    backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--futuristic-primary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--futuristic-secondary').trim()],
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: chartGridColor },
+                        ticks: {
+                            color: chartFontColor, font: { family: 'Inter' },
+                            callback: function (value, index, values) {
+                                if (index === 1) return value + '%';
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: chartFontColor, font: { family: 'Inter' } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        bodyFont: { family: 'Inter' },
+                        titleFont: { family: 'Inter' },
+                        callbacks: {
+                            label: function (tooltipContext) {
+                                let label = tooltipContext.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (tooltipContext.parsed.y !== null) {
+                                    if (tooltipContext.label.includes('%')) {
+                                        label += tooltipContext.parsed.y + '%';
+                                    } else {
+                                        label += tooltipContext.parsed.y;
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     // Año en el footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
     // === LÓGICA DE GEMINI (Prompts IA) ===
 
+    // Función para mostrar notificaciones toast
+    function showToast(icon, title, text, timer = 3000) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: timer,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+
+        Toast.fire({
+            icon: icon,
+            title: title,
+            text: text
+        });
+    }
+
     async function callGeminiAPI(prompt, outputId, loaderId) {
         const outputEl = document.getElementById(outputId);
         const loaderEl = document.getElementById(loaderId);
-        if (!outputEl || !loaderEl) return;
+
+        if (!outputEl || !loaderEl) {
+            showToast('error', 'Error', 'Elemento no encontrado');
+            return;
+        }
+
         loaderEl.classList.add('active');
         outputEl.textContent = '';
+
         const payload = { contents: [{ role: 'user', parts: [{ text: prompt }] }] };
         const apiKey = ''; // Asegúrate de inyectar tu API key
+
+        if (!apiKey) {
+            showToast('error', 'Error', 'API Key no configurada');
+            loaderEl.classList.remove('active');
+            return;
+        }
+
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
         try {
-            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`);
+            }
+
             const json = await res.json();
             const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
-            outputEl.textContent = text || 'Respuesta vacía de la IA.';
+
+            if (!text) {
+                showToast('warning', 'Atención', 'La IA no generó una respuesta válida');
+                outputEl.textContent = 'No se pudo generar una respuesta en este momento.';
+                return;
+            }
+
+            outputEl.textContent = text;
+            showToast('success', '¡Listo!', 'Respuesta generada con éxito');
+
         } catch (err) {
-            outputEl.textContent = `Error IA: ${err.message}`;
-            console.error(err);
+            console.error('Error en la llamada a la API:', err);
+            const errorMessage = err.message || 'Error al conectar con el servicio de IA';
+            showToast('error', 'Error', errorMessage);
+            outputEl.textContent = `Error: ${errorMessage}`;
         } finally {
             loaderEl.classList.remove('active');
         }
@@ -211,7 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (optimizeBtn && clearDescBtn) {
         optimizeBtn.addEventListener('click', () => {
             const desc = document.getElementById('serviceDescriptionInput').value.trim();
-            if (!desc) return alert('Por favor, ingrese una descripción.');
+            if (!desc) {
+                showToast('warning', 'Campo requerido', 'Por favor, ingrese una descripción');
+                return;
+            }
             const prompt = `Eres experto en marketing. Mejora: "${desc}" ofreciendo 3 sugerencias enfocadas en claridad e impacto.`;
             callGeminiAPI(prompt, 'serviceDescriptionOutput', 'serviceDescriptionLoader');
         });

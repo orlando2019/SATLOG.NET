@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Virtual - SATLOG.NET</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .chat-container {
+            height: 80vh;
+            max-height: 80vh;
+        }
+        .messages {
+            height: calc(100% - 60px);
+            overflow-y: auto;
+        }
+        .typing-indicator span {
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Asistente Virtual SATLOG.NET</h1>
+            </div>
+            
+            <div class="chat-container border rounded-lg overflow-hidden">
+                <div id="chatMessages" class="messages p-4 space-y-4 bg-gray-50">
+                    <!-- Mensajes aparecerán aquí -->
+                    <div class="message bot-message">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-lg rounded-tl-none">
+                                <p class="text-gray-800">¡Hola! Soy tu asistente virtual de SATLOG.NET. ¿En qué puedo ayudarte hoy?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-white border-t">
+                    <div class="flex space-x-2">
+                        <input type="text" id="userInput" 
+                               class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Escribe tu mensaje..." autofocus>
+                        <button id="sendButton" 
+                                class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div id="typingIndicator" class="typing-indicator text-sm text-gray-500 mt-2 hidden">
+                        <span>•</span>
+                        <span>•</span>
+                        <span>•</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center text-sm text-gray-500">
+                <p>SATLOG.NET - Soporte Inteligente 24/7</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/chatbot.js" type="module"></script>
+</body>
+</html>
