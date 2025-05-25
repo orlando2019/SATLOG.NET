@@ -1,0 +1,162 @@
+/* Tipografía general */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Variables de color (futuristic theme) */
+:root {
+    --futuristic-primary: #0A2A4D;
+    --futuristic-secondary: #00C9D1;
+    --futuristic-accent: #A020F0;
+    --futuristic-bg-light: #F0F4F8;
+    --futuristic-card-bg: #FFFFFF;
+    --futuristic-text-dark: #1A202C;
+    --futuristic-text-light: #718096;
+    --futuristic-text-header: #E0E7FF;
+    --futuristic-hover-accent: #7017A8;
+    --futuristic-clear-button-bg: #4A5568;
+    --futuristic-clear-button-hover-bg: #2D3748;
+}
+
+/* Clases de utilidad personalizadas */
+.bg-futuristic-primary {
+    background-color: var(--futuristic-primary);
+}
+
+.bg-futuristic-secondary {
+    background-color: var(--futuristic-secondary);
+}
+
+.bg-futuristic-bg-light {
+    background-color: var(--futuristic-bg-light);
+}
+
+.bg-futuristic-card-bg {
+    background-color: var(--futuristic-card-bg);
+}
+
+.text-futuristic-text-dark {
+    color: var(--futuristic-text-dark);
+}
+
+.text-futuristic-text-light {
+    color: var(--futuristic-text-light);
+}
+
+.text-futuristic-text-header {
+    color: var(--futuristic-text-header);
+}
+
+.text-futuristic-secondary {
+    color: var(--futuristic-secondary);
+}
+
+.text-futuristic-accent {
+    color: var(--futuristic-accent);
+}
+
+.border-futuristic-accent {
+    border-color: var(--futuristic-accent);
+}
+
+.hover\:text-futuristic-accent:hover {
+    color: var(--futuristic-accent);
+}
+
+.hover\:text-futuristic-hover-accent:hover {
+    color: var(--futuristic-hover-accent);
+}
+
+/* Navegación */
+.nav-link {
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-link.active {
+    color: var(--futuristic-secondary);
+    border-bottom-color: var(--futuristic-secondary);
+    font-weight: 600;
+}
+
+/* Secciones ocultas */
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Contenedores de gráfico */
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    height: 300px;
+    max-height: 400px;
+}
+
+@media (min-width: 768px) {
+    .chart-container {
+        height: 350px;
+    }
+}
+
+/* Acordeón */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+/* Riesgos */
+.risk-item-mitigation {
+    display: none;
+}
+
+/* Botones Gemini */
+.gemini-button {
+    background-color: var(--futuristic-accent);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.gemini-button:hover {
+    background-color: var(--futuristic-hover-accent);
+}
+
+.gemini-clear-button {
+    background-color: var(--futuristic-clear-button-bg);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.gemini-clear-button:hover {
+    background-color: var(--futuristic-clear-button-hover-bg);
+}
+
+/* Loader y respuesta IA */
+.loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    color: var(--futuristic-primary);
+}
+
+.loading-indicator.active {
+    display: block;
+}
+
+.gemini-response {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(0, 201, 209, 0.05);
+    border: 1px dashed var(--futuristic-secondary);
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+    color: var(--futuristic-text-dark);
+    min-height: 50px;
+}
