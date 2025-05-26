@@ -1,6 +1,6 @@
 // Configuración de la API de Gemini
-const API_KEY = ''; // Añade tu API Key de Gemini aquí
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+// Endpoint serverless para ocultar API Key
+const API_ENDPOINT = '/.netlify/functions/gemini';
 
 // Elementos del DOM
 const chatbotButton = document.getElementById('chatbotButton');
@@ -13,17 +13,12 @@ const chatbotSend = document.getElementById('chatbotSend');
 // Variables de estado
 let isChatOpen = false;
 let isLoading = false;
+let userName = null;
 
 // Historial de la conversación
+const systemPrompt = 'Eres un asistente virtual de SATLOG.NET, una empresa especializada en soluciones tecnológicas integradas para PYMES. Proporciona respuestas concisas y útiles sobre servicios de desarrollo de software, ciberseguridad y análisis de datos. Si no sabes algo, ofrecerás contactar con un asesor humano.';
 let conversationHistory = [
-    {
-        role: 'user',
-        parts: [{ text: 'Eres un asistente virtual de SATLOG.NET, una empresa especializada en soluciones tecnológicas integradas para PYMES. Proporciona respuestas concisas y útiles sobre servicios de desarrollo de software, ciberseguridad y análisis de datos. Si no sabes algo, ofrecerás contactar con un asesor humano. Saluda amablemente al inicio.' }]
-    },
-    {
-        role: 'model',
-        parts: [{ text: '¡Hola! Soy tu asistente virtual de SATLOG.NET. Estoy aquí para ayudarte con información sobre nuestros servicios de desarrollo de software, ciberseguridad y análisis de datos. ¿En qué puedo asistirte hoy?' }]
-    }
+    { role: 'user', parts: [{ text: systemPrompt }] }
 ];
 
 // Función para alternar la visibilidad del chat
@@ -41,14 +36,14 @@ function toggleChat() {
 function addMessage(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}`;
-    
+
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
     messageContent.textContent = content;
-    
+
     messageDiv.appendChild(messageContent);
     chatbotMessages.appendChild(messageDiv);
-    
+
     // Desplazar al último mensaje
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
@@ -58,15 +53,15 @@ function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.className = 'message bot';
     typingDiv.id = 'typingIndicator';
-    
+
     const typingContent = document.createElement('div');
     typingContent.className = 'typing-indicator';
     typingContent.innerHTML = '<span></span><span></span><span></span>';
-    
+
     typingDiv.appendChild(typingContent);
     chatbotMessages.appendChild(typingDiv);
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-    
+
     return typingDiv;
 }
 
@@ -81,24 +76,31 @@ function hideTypingIndicator(typingElement) {
 async function sendMessage() {
     const message = chatbotInput.value.trim();
     if (!message || isLoading) return;
-    
+
     // Mostrar mensaje del usuario
     addMessage('user', message);
     chatbotInput.value = '';
-    
+
+    // Si aún no tenemos nombre, capturarlo y saludar
+    if (!userName) {
+        userName = message;
+        addMessage('bot', `Mucho gusto, ${userName}. ¿En qué puedo ayudarte hoy?`);
+        return;
+    }
+
     // Mostrar indicador de escritura
     const typingElement = showTypingIndicator();
-    
+
     // Agregar mensaje al historial
     conversationHistory.push({
         role: 'user',
         parts: [{ text: message }]
     });
-    
+
     isLoading = true;
-    
+
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -113,24 +115,24 @@ async function sendMessage() {
                 },
             }),
         });
-        
+
         if (!response.ok) {
             throw new Error(`Error en la API: ${response.status}`);
         }
-        
+
         const data = await response.json();
         const botResponse = data.candidates[0].content.parts[0].text;
-        
+
         // Agregar respuesta al historial
         conversationHistory.push({
             role: 'model',
             parts: [{ text: botResponse }]
         });
-        
+
         // Mostrar respuesta del bot
         hideTypingIndicator(typingElement);
         addMessage('bot', botResponse);
-        
+
     } catch (error) {
         console.error('Error:', error);
         hideTypingIndicator(typingElement);
@@ -151,10 +153,9 @@ chatbotInput.addEventListener('keypress', (e) => {
     }
 });
 
-// Mostrar mensaje de bienvenida al cargar la página
+// Preguntar nombre al usuario al cargar
 document.addEventListener('DOMContentLoaded', () => {
-    // Mostrar mensaje de bienvenida después de un pequeño retraso
     setTimeout(() => {
-        addMessage('bot', conversationHistory[1].parts[0].text);
+        addMessage('bot', '¡Hola! Soy tu asistente virtual de SATLOG.NET. ¿Cómo te llamas?');
     }, 500);
 });

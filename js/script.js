@@ -297,21 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
         outputEl.textContent = '';
 
         const payload = { contents: [{ role: 'user', parts: [{ text: prompt }] }] };
-        const apiKey = ''; // Asegúrate de inyectar tu API key
-
-        if (!apiKey) {
-            showToast('error', 'Error', 'API Key no configurada');
-            loaderEl.classList.remove('active');
-            return;
-        }
-
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         try {
-            const res = await fetch(url, {
+            // Llamada a función serverless para ocultar la API key
+            const res = await fetch('/.netlify/functions/gemini', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ prompt })
             });
 
             if (!res.ok) {
@@ -319,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const json = await res.json();
-            const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+            const text = json.text;
 
             if (!text) {
                 showToast('warning', 'Atención', 'La IA no generó una respuesta válida');
@@ -327,7 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            outputEl.textContent = text;
+            // Renderizar texto con formato Markdown a HTML
+            outputEl.innerHTML = DOMPurify.sanitize(marked.parse(text));
             showToast('success', '¡Listo!', 'Respuesta generada con éxito');
 
         } catch (err) {
@@ -364,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearIdeasBtn = document.getElementById('clearMarketingIdeasBtn');
     if (genIdeasBtn && clearIdeasBtn) {
         genIdeasBtn.addEventListener('click', () => {
-            const prompt = `Genera 3 ideas innovadoras de marketing digital para SATLOG.NET basado en sus servicios...`;
+            const prompt = `Genera 3 ideas innovadoras de marketing digital para ORJATECH basado en sus servicios...`;
             callGeminiAPI(prompt, 'marketingIdeasOutput', 'marketingIdeasLoader');
         });
         clearIdeasBtn.addEventListener('click', () => {
