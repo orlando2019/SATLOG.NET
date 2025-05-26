@@ -16,7 +16,7 @@ let isLoading = false;
 let userName = null;
 
 // Historial de la conversación
-const systemPrompt = 'Eres un asistente virtual de SATLOG.NET, una empresa especializada en soluciones tecnológicas integradas para PYMES. Proporciona respuestas concisas y útiles sobre servicios de desarrollo de software, ciberseguridad y análisis de datos. Si no sabes algo, ofrecerás contactar con un asesor humano.';
+const systemPrompt = 'Eres un asistente virtual de ORJATECH, una empresa especializada en soluciones tecnológicas integradas para PYMES. Proporciona respuestas concisas y útiles sobre servicios de desarrollo de software, ciberseguridad y análisis de datos. Si no sabes algo, ofrecerás contactar con un asesor humano.';
 let conversationHistory = [
     { role: 'user', parts: [{ text: systemPrompt }] }
 ];
@@ -156,6 +156,6 @@ chatbotInput.addEventListener('keypress', (e) => {
 // Preguntar nombre al usuario al cargar
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        addMessage('bot', '¡Hola! Soy tu asistente virtual de SATLOG.NET. ¿Cómo te llamas?');
+        addMessage('bot', '¡Hola! Soy tu asistente virtual de ORJATECH. ¿Cómo te llamas?');
     }, 500);
 });
